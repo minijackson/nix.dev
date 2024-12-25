@@ -1,7 +1,7 @@
 {
   inputs ? import ./nix/inputs.nix,
   system ? builtins.currentSystem,
-  pkgs ? import inputs.nixpkgs."23.05" {
+  pkgs ? import inputs.nixpkgs."24.11" {
     config = { };
     overlays = [ (import ./nix/overlay.nix) ];
     inherit system;
@@ -21,15 +21,19 @@ let
     pkgs.stdenv.mkDerivation {
       name = "nix-dev";
       src = ./.;
-      nativeBuildInputs = with pkgs.python310.pkgs; [
-        linkify-it-py
-        myst-parser
-        sphinx
-        sphinx-book-theme
-        sphinx-copybutton
-        sphinx-design
-        sphinx-notfound-page
-        sphinx-sitemap
+      nativeBuildInputs = [
+        (pkgs.python310.withPackages (
+          ps: with ps; [
+            linkify-it-py
+            myst-parser
+            sphinx
+            sphinx-book-theme
+            sphinx-copybutton
+            sphinx-design
+            sphinx-notfound-page
+            sphinx-sitemap
+          ]
+        ))
         pkgs.perl
       ];
       buildPhase =
